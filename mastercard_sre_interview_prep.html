@@ -1,0 +1,446 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.container { padding: 1.5rem 0; }
+.header { margin-bottom: 1.5rem; }
+.header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.header p { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; }
+.tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tab { padding: 7px 16px; font-size: 13px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; }
+.tab:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+.tab.active { background: var(--color-background-primary); border-color: #185FA5; color: #185FA5; border-width: 1.5px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.strength-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.strength-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; }
+.strength-card .label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.strength-card .value { font-size: 13px; color: var(--color-text-primary); line-height: 1.5; }
+.strength-card.good .label { color: #0F6E56; }
+.strength-card.gap .label { color: #993C1D; }
+
+.day-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.day-badge { background: #E6F1FB; color: #185FA5; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: var(--border-radius-md); }
+.day-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+.day-sub { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.block { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; margin-bottom: 10px; }
+.block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; }
+.block-icon { font-size: 18px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius-md); }
+.block-icon.blue { background: #E6F1FB; color: #185FA5; }
+.block-icon.teal { background: #E1F5EE; color: #0F6E56; }
+.block-icon.amber { background: #FAEEDA; color: #854F0B; }
+.block-icon.purple { background: #EEEDFE; color: #534AB7; }
+.block-icon.coral { background: #FAECE7; color: #993C1D; }
+.block-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.block-time { font-size: 12px; color: var(--color-text-secondary); margin-top: 1px; }
+.block-body { display: none; }
+.block-body.open { display: block; }
+.block-body ul { padding-left: 0; list-style: none; }
+.block-body ul li { font-size: 13px; color: var(--color-text-secondary); padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+.block-body ul li:last-child { border-bottom: none; }
+.block-body ul li::before { content: '›'; color: #185FA5; font-weight: 500; margin-top: 0px; flex-shrink: 0; }
+.tip { background: #E1F5EE; border-radius: var(--border-radius-md); padding: 10px 12px; margin-top: 10px; font-size: 12px; color: #0F6E56; line-height: 1.5; }
+.tip strong { font-weight: 500; }
+
+.q-section { margin-bottom: 1.5rem; }
+.q-section h3 { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+.q-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: background 0.1s; }
+.q-card:hover { background: var(--color-background-secondary); }
+.q-card .q { font-size: 13px; color: var(--color-text-primary); font-weight: 500; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.q-card .hint { font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; line-height: 1.5; display: none; }
+.q-card .hint.open { display: block; }
+.q-card .chevron { color: var(--color-text-secondary); font-size: 14px; flex-shrink: 0; transition: transform 0.15s; }
+.q-card.open .chevron { transform: rotate(180deg); }
+
+.story-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; margin-bottom: 10px; }
+.story-card .story-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+.star-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.star-item { font-size: 12px; padding: 3px 10px; border-radius: 20px; }
+.star-s { background: #E6F1FB; color: #0C447C; }
+.star-t { background: #EEEDFE; color: #3C3489; }
+.star-a { background: #FAEEDA; color: #633806; }
+.star-r { background: #E1F5EE; color: #085041; }
+.star-detail { font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; line-height: 1.6; }
+
+.checklist { list-style: none; }
+.checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; color: var(--color-text-primary); }
+.checklist li:last-child { border-bottom: none; }
+.checklist li input[type=checkbox] { margin-top: 2px; flex-shrink: 0; accent-color: #185FA5; width: 15px; height: 15px; }
+.section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin: 16px 0 8px; }
+
+.progress-bar-wrap { background: var(--color-background-secondary); border-radius: 20px; height: 6px; margin-top: 6px; }
+.progress-bar { height: 6px; border-radius: 20px; background: #185FA5; }
+</style>
+
+<div class="container">
+  <div class="header">
+    <h1>Mastercard Lead SRE — Interview prep guide</h1>
+    <p>Tailored for Purnachandra · 2-day plan · Interview with SRE Manager</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('fit')"><i class="ti ti-target" aria-hidden="true"></i> Your fit</div>
+    <div class="tab" onclick="switchTab('day1')"><i class="ti ti-calendar" aria-hidden="true"></i> Day 1</div>
+    <div class="tab" onclick="switchTab('day2')"><i class="ti ti-calendar-event" aria-hidden="true"></i> Day 2</div>
+    <div class="tab" onclick="switchTab('questions')"><i class="ti ti-message-circle" aria-hidden="true"></i> Likely questions</div>
+    <div class="tab" onclick="switchTab('stories')"><i class="ti ti-book" aria-hidden="true"></i> Your STAR stories</div>
+    <div class="tab" onclick="switchTab('checklist')"><i class="ti ti-checklist" aria-hidden="true"></i> Final checklist</div>
+  </div>
+
+  <!-- FIT TAB -->
+  <div id="fit" class="panel active">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.6;">Here's how your 12-year background maps to what Mastercard is looking for in this Lead SRE Generalist role.</div>
+    <div class="strength-grid">
+      <div class="strength-card good">
+        <div class="label">✓ Strong alignment</div>
+        <div class="value">Kubernetes architecture at Zurich — directly maps to reliability engineering and platform thinking</div>
+      </div>
+      <div class="strength-card good">
+        <div class="label">✓ Strong alignment</div>
+        <div class="value">OpenTelemetry + Honeycomb + ELK — deep observability stack matches Mastercard's signal quality focus</div>
+      </div>
+      <div class="strength-card good">
+        <div class="label">✓ Strong alignment</div>
+        <div class="value">50% deployment time reduction at Informatica — concrete MTTD/MTTR improvement story ready to tell</div>
+      </div>
+      <div class="strength-card good">
+        <div class="label">✓ Strong alignment</div>
+        <div class="value">Log4j zero-day response award — exactly the cross-domain incident leadership they want</div>
+      </div>
+      <div class="strength-card gap">
+        <div class="label">△ Bridge the gap</div>
+        <div class="value">SLO/SLA/error budget language not explicit in CV — need to speak this fluently in interview</div>
+      </div>
+      <div class="strength-card gap">
+        <div class="label">△ Bridge the gap</div>
+        <div class="value">No explicit chaos engineering / fault injection experience — prepare a "how you'd approach it" answer</div>
+      </div>
+      <div class="strength-card gap">
+        <div class="label">△ Bridge the gap</div>
+        <div class="value">Financial services / payments context is new — study Mastercard's reliability philosophy briefly</div>
+      </div>
+      <div class="strength-card gap">
+        <div class="label">△ Bridge the gap</div>
+        <div class="value">Toil reduction is in JD but not prominently in CV — pull out your 75% automation story from AVR Edge</div>
+      </div>
+    </div>
+    <div class="tip"><strong>Key reframe:</strong> Your title is "DevOps/Architect" but this role is SRE. In the interview, translate your language: CI/CD → deployment reliability; monitoring → observability & signal quality; automation → toil elimination. Same work, SRE framing wins.</div>
+  </div>
+
+  <!-- DAY 1 TAB -->
+  <div id="day1" class="panel">
+    <div class="day-header">
+      <div>
+        <div class="day-badge">Day 1 — Foundation</div>
+        <div class="day-title" style="margin-top:6px;">Deepen SRE concepts & sharpen your stories</div>
+        <div class="day-sub">Focus: SRE theory, observability depth, incident frameworks</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon blue"><i class="ti ti-clock" aria-hidden="true"></i></div>
+        <div><div class="block-title">Morning (2–3 hrs) — SRE core concepts</div><div class="block-time">SLOs · error budgets · toil · reliability hierarchy</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li>Study the SRE triangle: SLIs (what you measure), SLOs (what you commit to), SLAs (contractual). Be ready to define each and give an example from your systems at Informatica or Zurich.</li>
+          <li>Understand error budgets: "If my SLO is 99.9% uptime, I have 8.7 hrs/year of error budget. Here's how I'd manage burn rate." Practice saying this out loud.</li>
+          <li>Toil elimination: review your 75% manual intervention reduction at AVR Edge and your Jenkins/Harness automation work. Frame these as "reducing operational toil so engineers focus on reliability work."</li>
+          <li>Read the Google SRE chapter on "Eliminating Toil" (free online, ~20 mins). Note 2–3 frameworks to reference naturally.</li>
+          <li>MTTD vs MTTR vs MTBF: be precise about which metric your work at Informatica improved and by how much.</li>
+        </ul>
+        <div class="tip"><strong>Your angle:</strong> Your 50% deployment time reduction at Informatica is a strong MTTR story. Reframe it: "We reduced MTTR by shortening deployment cycles and increasing deployment confidence through Harness pipelines."</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon teal"><i class="ti ti-eye" aria-hidden="true"></i></div>
+        <div><div class="block-title">Late morning (1.5 hrs) — Observability depth</div><div class="block-time">Your strongest technical area — go deep</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li>You have a genuine edge here: OpenTelemetry + Honeycomb + ELK at Zurich, plus ELK at Informatica. Prepare a 3-minute architecture walkthrough of your current OTel setup.</li>
+          <li>Know the three pillars: logs, metrics, traces — and crucially, when each is the right signal. The JD asks about "signal quality" specifically.</li>
+          <li>Prepare an answer to: "How do you distinguish noise from signal in your alerts? How do you avoid alert fatigue?" — use your Kibana dashboards experience.</li>
+          <li>Understand cardinality in observability (Honeycomb's key strength) — why high-cardinality data helps debug production incidents faster.</li>
+          <li>Think about a real incident where observability data helped you find the root cause. Structure it as a short story you can tell in 90 seconds.</li>
+        </ul>
+        <div class="tip"><strong>JD keyword alert:</strong> The role says "surfacing early indicators of degradation, not just failure states." Your OTel work at Zurich is perfect evidence — prepare 2 sentences on how your traces/metrics detected issues before users felt them.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon amber"><i class="ti ti-flame" aria-hidden="true"></i></div>
+        <div><div class="block-title">Afternoon (2 hrs) — Incident response mastery</div><div class="block-time">Root cause analysis · post-mortems · blameless culture</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li>Revisit your Log4j zero-day response (Think Customer First Award). Structure it as: what was the signal → how you investigated → cross-team coordination → resolution → what changed permanently as a result.</li>
+          <li>Study the "5 Whys" and fishbone diagram methods for root cause analysis. The JD explicitly mentions "data-driven investigation techniques."</li>
+          <li>Blameless post-mortems: understand the philosophy and how to run one. Mastercard at this scale will care deeply about post-mortem culture.</li>
+          <li>Prepare an example of an incident that led to a systemic improvement — "not just what broke, but why the system allowed it to break."</li>
+          <li>Review your EBF (Emergency Bug Fix) experience at Informatica — how did you manage post-release incidents and source code merges under pressure?</li>
+        </ul>
+        <div class="tip"><strong>Key phrase to use:</strong> "We treat incidents as learning opportunities, not failures to punish." This language maps directly to what the JD describes.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon purple"><i class="ti ti-users" aria-hidden="true"></i></div>
+        <div><div class="block-title">Evening (1 hr) — Leadership & influence prep</div><div class="block-time">Cross-functional influence without authority</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li>This is a Lead role — the SRE manager wants evidence you can influence app, platform, and infra teams. Prepare examples of when you drove reliability decisions without being the manager.</li>
+          <li>Use your mentoring examples (Act As One Team award) to show cross-team leadership.</li>
+          <li>Think of a time you pushed back on a design decision for reliability reasons and won. Or a time you had to compromise — and what you got in return.</li>
+          <li>The JD says "represent the reliability perspective early in the development lifecycle." Prepare a story about shifting left — catching reliability risks before deployment.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 2 TAB -->
+  <div id="day2" class="panel">
+    <div class="day-header">
+      <div>
+        <div class="day-badge">Day 2 — Polish & Practice</div>
+        <div class="day-title" style="margin-top:6px;">Mock answers, Mastercard research & interview readiness</div>
+        <div class="day-sub">Focus: storytelling, company context, technical scenarios</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon blue"><i class="ti ti-building-bank" aria-hidden="true"></i></div>
+        <div><div class="block-title">Morning (1.5 hrs) — Mastercard & payments context</div><div class="block-time">Know your audience — a financial infrastructure company</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li>Understand Mastercard's core infrastructure: they process billions of transactions/year, where downtime = financial loss and reputational damage. Reliability is not optional — it's the product.</li>
+          <li>Research their tech blog and engineering culture (Mastercard Developer Zone). Note any reliability engineering posts you can reference.</li>
+          <li>Think about how financial-grade SLOs differ from typical SaaS: 99.999% vs 99.9% — and what operational practices that requires.</li>
+          <li>Payments-specific reliability concerns: idempotency, circuit breakers, graceful degradation, transaction rollback safety. Know these at a conceptual level.</li>
+          <li>Prepare a genuine answer to "Why Mastercard specifically?" — connect their scale and reliability demands to what excites you about the role.</li>
+        </ul>
+        <div class="tip"><strong>Your insurance angle:</strong> You're at Zurich Insurance — another highly regulated, high-reliability domain. Use this: "I understand operating infrastructure where failure has direct financial and compliance consequences."</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon teal"><i class="ti ti-terminal" aria-hidden="true"></i></div>
+        <div><div class="block-title">Late morning (2 hrs) — Technical scenario practice</div><div class="block-time">Hands-on problem solving the SRE manager will probe</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li><strong>Scenario 1 — Runbook design:</strong> "A payment processing service starts showing elevated latency. Walk me through your investigation." Practice: check metrics → traces → logs → narrow to service → check recent deploys → escalate or resolve. Say it out loud.</li>
+          <li><strong>Scenario 2 — SLO definition:</strong> "How would you define SLOs for a new microservice?" Your answer: start with user journey, define SLIs (latency p99, error rate, availability), set SLO targets, calculate error budget, set up burn rate alerts.</li>
+          <li><strong>Scenario 3 — Capacity planning:</strong> "How do you ensure a service handles 10x traffic?" Cover: load testing, horizontal scaling in K8s (HPA), resource quotas, circuit breakers. You have K8s depth — use it.</li>
+          <li><strong>Scenario 4 — Reducing toil:</strong> "What operational work is wasting your team's time and how would you eliminate it?" Use your automation framework (Aspire For Future Award) as the example answer.</li>
+          <li>Review your Kubernetes architecture work at Zurich — be ready to whiteboard or describe it in detail: how OTel collectors are deployed, how traces flow, how you scale the observability platform.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon amber"><i class="ti ti-microphone" aria-hidden="true"></i></div>
+        <div><div class="block-title">Afternoon (1.5 hrs) — Mock interview & story rehearsal</div><div class="block-time">Say your answers out loud — not just in your head</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li>Record yourself answering 3 questions on your phone. Play it back. Are you concise? Do you say "um" excessively? Is your story under 3 minutes?</li>
+          <li>Practice the "tell me about yourself" answer for an SRE manager: lead with your observability and reliability work, not your DevOps/CI-CD background.</li>
+          <li>Rehearse transitions between technical depth and business impact: "This reduced our MTTD by X, which meant fewer customer-facing incidents and less on-call escalation."</li>
+          <li>Prepare 4–5 smart questions to ask the manager. Examples: "What does a typical major incident look like here and how does your team learn from it?" / "How do you balance reliability work with feature delivery pressure?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header" onclick="toggleBlock(this)">
+        <div class="block-icon coral"><i class="ti ti-moon" aria-hidden="true"></i></div>
+        <div><div class="block-title">Evening (45 mins) — Final review & rest</div><div class="block-time">Light review, not cramming</div></div>
+        <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      </div>
+      <div class="block-body">
+        <ul>
+          <li>Re-read the job description one more time and mentally tick each requirement against a story you've prepared.</li>
+          <li>Write your 5 key talking points on a sticky note: (1) OTel observability depth (2) K8s reliability platform (3) Log4j incident leadership (4) 50% MTTR reduction (5) toil automation track record.</li>
+          <li>Stop studying at 9pm. Sleep is more valuable than another hour of prep — you already have 12 years of relevant experience.</li>
+        </ul>
+        <div class="tip"><strong>Mindset going in:</strong> You are not junior to this role. Your observability architecture at Zurich is genuinely cutting-edge. Walk in as a peer, not a candidate.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTIONS TAB -->
+  <div id="questions" class="panel">
+    <div class="q-section">
+      <div class="section-label">Technical — expect these</div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">How do you define and enforce SLOs for a service you own?<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Start with user journey → define SLIs (error rate, latency p99, availability) → set SLO target → calculate error budget → configure burn rate alerts in your monitoring stack. Reference your OTel/Honeycomb setup.</div>
+      </div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">Walk me through a production incident you led. What was your process?<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Use the Log4j zero-day story. Signal detection → severity assessment → cross-team coordination → structured investigation → resolution → blameless post-mortem → systemic hardening. Emphasise the "why the system allowed it" angle.</div>
+      </div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">How do you identify and eliminate operational toil?<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Define toil (manual, repetitive, automatable, scales linearly with load). Reference your 75% manual reduction at AVR Edge and the automation framework you built (Aspire Award). Mention your Jenkins/Harness pipeline work as systematic toil elimination.</div>
+      </div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">Describe your observability architecture. How do you ensure signal quality?<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Lead with your Zurich OTel design: collectors, pipelines, Honeycomb for high-cardinality traces, ELK for logs. Explain how you reduced alert noise, built dashboards that show degradation before failure, and how you chose which metrics matter.</div>
+      </div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">How do you approach capacity planning and proactive reliability?<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Cover: traffic analysis, load testing (k6/Locust/JMeter), Kubernetes HPA and VPA, resource quotas, historical incident patterns. The JD emphasises "anticipation over reaction" — frame your answer around identifying failure patterns before they cause outages.</div>
+      </div>
+    </div>
+    <div class="q-section">
+      <div class="section-label">Behavioural — expect these</div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">Tell me about a time you influenced a reliability decision without being the manager.<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Use your cross-team mentoring examples or a time you pushed back on a deployment decision for reliability reasons. Frame it around data: "I showed the team the error rate data, and we agreed to defer the release."</div>
+      </div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">How do you balance reliability work with feature delivery pressure?<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Use error budget as the negotiation tool: "When the error budget is healthy, teams can move fast. When it's burning, we pause feature work to focus on reliability. This removes the argument — the data decides." Show you understand the SRE value proposition.</div>
+      </div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">Describe a time you turned an incident into a lasting improvement.<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Log4j response → led to better dependency scanning, Black Duck integration, automated vulnerability alerting. Or your EBF post-release activities that improved source code merge processes. Focus on the systemic change, not just the fix.</div>
+      </div>
+      <div class="q-card" onclick="toggleQ(this)">
+        <div class="q">Why SRE, and why this role specifically?<i class="ti ti-chevron-down chevron"></i></div>
+        <div class="hint">Your work IS SRE — you've been doing reliability engineering under a DevOps title. Connect: Mastercard's scale (billions of transactions) demands the kind of proactive, data-driven reliability work you're already doing at Zurich. This role lets you formalise and lead that at greater scale.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAR STORIES TAB -->
+  <div id="stories" class="panel">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px;line-height:1.6;">Four pre-built STAR stories drawn from your CV, mapped to the JD's key competencies.</div>
+
+    <div class="story-card">
+      <div class="story-title">Story 1 — Proactive reliability: Log4j zero-day response</div>
+      <div class="star-row">
+        <span class="star-item star-s">S: Log4j critical CVE discovered in production dependencies</span>
+        <span class="star-item star-t">T: Identify all affected services, patch without disruption</span>
+      </div>
+      <div class="star-detail">
+        <strong>Action:</strong> Led cross-team rapid response — inventoried dependencies using Black Duck, prioritised by exposure risk, coordinated emergency patches across multiple product release cycles without breaking existing pipelines.<br>
+        <strong>Result:</strong> Zero customer-facing impact. Earned "Think Customer First" award. Led to permanent improvement: automated dependency vulnerability scanning integrated into CI pipeline, reducing future detection time from days to hours.
+      </div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-title">Story 2 — Toil reduction & automation: deployment pipeline transformation</div>
+      <div class="star-row">
+        <span class="star-item star-s">S: Manual, slow deployments causing release bottlenecks at Informatica</span>
+        <span class="star-item star-t">T: Automate and streamline to support multiple concurrent releases</span>
+      </div>
+      <div class="star-detail">
+        <strong>Action:</strong> Designed and implemented Kubernetes deployments integrated with Jenkins and Harness pipelines. Automated Docker-based release processes across AWS and on-premises environments. Built reusable pipeline templates.<br>
+        <strong>Result:</strong> 50% reduction in deployment time. Teams could run multiple concurrent releases confidently. Operational toil shifted from manual steps to automated validation — engineers freed up for reliability work.
+      </div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-title">Story 3 — Observability architecture: OTel framework at Zurich</div>
+      <div class="star-row">
+        <span class="star-item star-s">S: Zurich Insurance lacked unified, vendor-agnostic observability across backend services</span>
+        <span class="star-item star-t">T: Design flexible observability platform without vendor lock-in</span>
+      </div>
+      <div class="star-detail">
+        <strong>Action:</strong> Architected Kubernetes-based OpenTelemetry framework covering traces, metrics and log analysis. Chose OTel standard to preserve vendor flexibility. Integrated with Honeycomb for high-cardinality trace analysis.<br>
+        <strong>Result:</strong> Teams can now surface degradation signals early — before users are impacted. Observability data drives proactive reliability decisions rather than reactive firefighting.
+      </div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-title">Story 4 — Innovation & automation framework (bug detection)</div>
+      <div class="star-row">
+        <span class="star-item star-s">S: Bugs being caught late in the release cycle, increasing incident risk</span>
+        <span class="star-item star-t">T: Shift quality left to reduce production issues</span>
+      </div>
+      <div class="star-detail">
+        <strong>Action:</strong> Innovated an automation framework to identify bugs during development phase. Built tools that gave developers fast feedback loops, eliminating classes of defect before they reached production.<br>
+        <strong>Result:</strong> Earned "Aspire For Future" award. Reduced production bug rate and on-call burden. Demonstrates the SRE principle of eliminating failure classes rather than responding to individual failures.
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST TAB -->
+  <div id="checklist" class="panel">
+    <div class="section-label">Day 1 tasks</div>
+    <ul class="checklist">
+      <li><input type="checkbox"> Study SLI/SLO/SLA/error budget — practice defining them from your own systems</li>
+      <li><input type="checkbox"> Prepare your OTel architecture walkthrough (3 minutes, can whiteboard it)</li>
+      <li><input type="checkbox"> Structure your Log4j incident as a full STAR story</li>
+      <li><input type="checkbox"> Read Google SRE "Eliminating Toil" chapter (free online)</li>
+      <li><input type="checkbox"> Reframe your CV experience in SRE language — write 5 bullet points</li>
+      <li><input type="checkbox"> Prepare your cross-functional influence story (leadership without authority)</li>
+    </ul>
+    <div class="section-label">Day 2 tasks</div>
+    <ul class="checklist">
+      <li><input type="checkbox"> Research Mastercard's engineering blog / reliability philosophy (30 mins)</li>
+      <li><input type="checkbox"> Practice Scenario 1: latency investigation walkthrough out loud</li>
+      <li><input type="checkbox"> Practice Scenario 2: how to define SLOs for a new microservice</li>
+      <li><input type="checkbox"> Record yourself doing "tell me about yourself" — watch it back</li>
+      <li><input type="checkbox"> Write your 5 smart questions for the SRE manager</li>
+      <li><input type="checkbox"> Print/save your 5 key talking points for a 60-second mental review before the call</li>
+    </ul>
+    <div class="section-label">Morning of interview</div>
+    <ul class="checklist">
+      <li><input type="checkbox"> Re-read the job description one final time</li>
+      <li><input type="checkbox"> Review your 4 STAR stories — just headlines, not detail</li>
+      <li><input type="checkbox"> Confirm interview time and format (video/phone/in-person)</li>
+      <li><input type="checkbox"> Have a glass of water ready — long technical answers dry the throat</li>
+    </ul>
+    <div class="tip" style="margin-top:16px;"><strong>You're well-positioned for this role.</strong> 12 years of experience, current Zurich Insurance role in observability architecture, and a track record of cross-team leadership. Focus your energy on translating your DevOps framing into SRE language — that's the main gap to close.</div>
+  </div>
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleBlock(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  if (body.classList.contains('open')) {
+    chevron.style.transform = 'rotate(180deg)';
+  } else {
+    chevron.style.transform = '';
+  }
+}
+
+function toggleQ(card) {
+  const hint = card.querySelector('.hint');
+  const chevron = card.querySelector('.chevron');
+  hint.classList.toggle('open');
+  card.classList.toggle('open');
+}
+</script>

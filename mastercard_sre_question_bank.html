@@ -1,0 +1,349 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1.5rem 0;font-family:var(--font-sans)}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px}
+.top-bar h1{font-size:19px;font-weight:500;color:var(--color-text-primary)}
+.top-bar p{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.pill{padding:5px 13px;font-size:12px;font-weight:500;border:0.5px solid var(--color-border-secondary);border-radius:20px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.pill:hover{background:var(--color-background-secondary)}
+.pill.on{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;text-align:center}
+.stat .n{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat .l{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.q-list{}
+.q-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden}
+.q-head{padding:14px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:12px}
+.q-head:hover{background:var(--color-background-secondary)}
+.q-meta{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.q-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px}
+.tag-tech{background:#EEEDFE;color:#3C3489}
+.tag-beh{background:#E1F5EE;color:#085041}
+.tag-scen{background:#FAEEDA;color:#633806}
+.tag-sys{background:#FAECE7;color:#712B13}
+.tag-hard{background:#FCEBEB;color:#791F1F}
+.tag-med{background:#FAEEDA;color:#633806}
+.tag-easy{background:#EAF3DE;color:#27500A}
+.q-text{font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.5;margin-top:4px}
+.q-source{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+.chev{color:var(--color-text-secondary);font-size:16px;flex-shrink:0;margin-top:2px;transition:transform .15s}
+.q-body{display:none;border-top:0.5px solid var(--color-border-tertiary);padding:16px}
+.q-body.open{display:block}
+.q-item.open .chev{transform:rotate(180deg)}
+.section{margin-bottom:14px}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+.answer-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;font-size:13px;color:var(--color-text-primary);line-height:1.65}
+.answer-box b{font-weight:500}
+.watch{background:#FAEEDA;border-radius:var(--border-radius-md);padding:10px 12px;font-size:12px;color:#633806;line-height:1.5;margin-top:10px}
+.watch b{font-weight:500}
+.no-results{text-align:center;padding:3rem 1rem;color:var(--color-text-secondary);font-size:14px}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">Mastercard Lead SRE interview question bank with model answers tailored to Purnachandra's background</h2>
+
+<div class="top-bar">
+  <div>
+    <h1>Interview question bank</h1>
+    <p>Mastercard Lead SRE · 25 questions · model answers from your CV</p>
+  </div>
+</div>
+
+<div class="filters">
+  <span class="pill on" onclick="filter('all',this)">All</span>
+  <span class="pill" onclick="filter('tech',this)">Technical</span>
+  <span class="pill" onclick="filter('beh',this)">Behavioural</span>
+  <span class="pill" onclick="filter('scen',this)">Scenario</span>
+  <span class="pill" onclick="filter('sys',this)">System design</span>
+  <span class="pill" onclick="filter('hard',this)"><i class="ti ti-flame" aria-hidden="true"></i> Hard</span>
+  <span class="pill" onclick="filter('med',this)">Medium</span>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="n" id="s-total">25</div><div class="l">Total</div></div>
+  <div class="stat"><div class="n">8</div><div class="l">Technical</div></div>
+  <div class="stat"><div class="n">7</div><div class="l">Behavioural</div></div>
+  <div class="stat"><div class="n">10</div><div class="l">Scenario / design</div></div>
+</div>
+
+<div class="q-list" id="qlist"></div>
+</div>
+
+<script>
+const Qs = [
+  {
+    id:1, type:'tech', diff:'med',
+    q:"What is the difference between an SLI, SLO, and SLA? Give a concrete example from a system you've owned.",
+    source:"Reported in Mastercard & major fintech SRE rounds",
+    why:"Fundamental SRE literacy check — interviewers say candidates often confuse SLO and SLA.",
+    answer:`<b>Your answer:</b> "An SLI is the raw measurement — for example, the percentage of successful API responses over 5 minutes. The SLO is the target we commit to internally — say, 99.9% success rate over a rolling 28 days. The SLA is the contractual version with external parties, often with penalties attached.\n\nAt Informatica, we tracked deployment success rates via Jenkins pipeline metrics. I'd frame that as: SLI = % of deployments completing without rollback. SLO = 98% successful deploy rate per sprint. If I were formalising this, I'd set error budget burn rate alerts at 5% consumed in 1 hour to trigger investigation before we burn through monthly budget."`,
+    watch:`Don't just define the terms — give a <b>real number</b> from your work. Interviewers flag candidates who only answer theoretically.`
+  },
+  {
+    id:2, type:'tech', diff:'hard',
+    q:"How do you set error budget burn rate alerts? What thresholds do you use and why?",
+    source:"Commonly asked at senior/lead SRE interviews, Glassdoor",
+    why:"Tests whether you've actually operationalised SLOs, not just understood them conceptually.",
+    answer:`<b>Your answer:</b> "I use a two-window burn rate model. A fast burn alert (e.g. 14x budget burn rate over 1 hour) catches acute incidents immediately — this pages on-call. A slow burn alert (e.g. 3x over 6 hours) catches gradual degradation that a 1-hour window would miss.\n\nIn my OTel setup at Zurich, I instrument this through Honeycomb-derived metrics fed into alerting rules. The key insight is that burn rate = how fast you're depleting budget relative to the SLO window. At 14x over 1 hour you'll exhaust a 30-day budget in 2 days — that's a page. At 3x over 6 hours you'll exhaust it in 10 days — that's a ticket that needs attention this sprint."`,
+    watch:`If you haven't implemented this precisely, acknowledge it honestly and describe how you'd implement it. Don't bluff the math — the interviewer may push on it.`
+  },
+  {
+    id:3, type:'tech', diff:'med',
+    q:"Walk me through how you designed your OpenTelemetry observability architecture at Zurich. What decisions did you make and why?",
+    source:"Direct CV question — expect it given your current role",
+    why:"This is your strongest differentiator. The interviewer wants to hear architectural thinking, not just tool names.",
+    answer:`<b>Your answer structure:</b>\n\n<b>The problem:</b> "Zurich's backend services had siloed monitoring — no unified trace context across services, vendor-locked tooling making cost and flexibility difficult."\n\n<b>Decision — OTel standard:</b> "I chose OpenTelemetry because it's vendor-neutral. We instrument once and can route to Honeycomb, Prometheus, or any backend without re-instrumenting. This gave us future flexibility as the stack evolves."\n\n<b>Architecture:</b> "OTel collectors deployed as a DaemonSet in Kubernetes. Services emit traces, metrics and logs via OTLP. Collectors batch, sample, and route. Honeycomb for high-cardinality trace analysis; ELK for log aggregation and dashboards."\n\n<b>Signal quality:</b> "We tuned sampling — 100% for error traces, 10% head-based for normal traffic. This kept storage costs manageable while preserving full fidelity for the signals that matter."`,
+    watch:`Don't just list the stack. The interviewer wants to hear <b>why you made each choice</b> and what problem it solved. Prepare 3 decision rationales.`
+  },
+  {
+    id:4, type:'tech', diff:'med',
+    q:"How do you distinguish meaningful signals from noise in your alerting? How have you reduced alert fatigue?",
+    source:"Glassdoor SRE interviews, multiple companies",
+    why:"The JD explicitly mentions signal quality. This is a direct test of that.",
+    answer:`<b>Your answer:</b> "Alert fatigue comes from alerting on symptoms rather than causes, and on thresholds that aren't tied to user impact.\n\nMy approach: every alert must have a runbook and be actionable within 15 minutes. If it's not actionable, it becomes a dashboard metric, not an alert. I also moved from static thresholds (CPU > 80%) to SLO-based alerting — page when error budget is burning, not when a single metric crosses a threshold.\n\nAt Informatica with ELK, we had excessive log-based alerts. I audited 30 days of alert history, found 60% had no resulting action taken, and converted those to Kibana dashboard panels that engineers review in morning standup. Alerts dropped by roughly half; signal quality went up."`,
+    watch:`Have a concrete <b>number</b> ready — how many alerts you reduced, or how you measured the improvement. "Roughly half" with context is better than a vague claim.`
+  },
+  {
+    id:5, type:'tech', diff:'hard',
+    q:"Explain the difference between black-box monitoring and white-box monitoring. When would you use each?",
+    source:"Google SRE-style interviews, reported at senior level",
+    why:"Tests observability philosophy — do you think from the user's perspective or only the system's?",
+    answer:`<b>Your answer:</b> "Black-box monitoring checks what users experience — can I reach the endpoint? Does it return the right response? It's what your SLI should ultimately measure because it reflects actual user impact. Synthetic probes, canary requests, and health checks are black-box.\n\nWhite-box monitoring looks at internal system state — CPU, memory, queue depth, connection pool size, JVM GC pauses. It's essential for diagnosis and capacity planning but can give false confidence (system looks healthy internally while users see failures).\n\nIn my OTel setup: black-box via synthetic transaction traces through Honeycomb — we replay representative journeys every 2 minutes. White-box via Prometheus metrics from Kubernetes pods. The black-box SLI drives our SLO; white-box metrics help us diagnose WHY it's burning when it is."`,
+    watch:`Strong candidates connect this to SLI design — black-box metrics are the right basis for SLOs. Make that connection explicitly.`
+  },
+  {
+    id:6, type:'tech', diff:'med',
+    q:"What's your experience with chaos engineering or fault injection? How would you introduce it to a team that's never done it?",
+    source:"Frequently asked at Lead SRE level — tests proactive reliability thinking",
+    why:"Your CV doesn't explicitly mention chaos engineering — bridge this gap here.",
+    answer:`<b>Your answer:</b> "I haven't run formal chaos experiments yet, but I've done the groundwork that makes chaos engineering viable: strong observability, defined SLOs, and documented failure modes from incident post-mortems.\n\nMy approach to introducing it: start with game days — scheduled, announced failure simulations in lower environments. Pick failures we've actually seen in production (network partition between services, pod OOM kills) so the scenarios are grounded. Measure whether our SLOs hold.\n\nThe prerequisite is that you need to be able to observe the impact clearly before you deliberately cause it. My OTel/Honeycomb setup at Zurich gives us that foundation. I'd use a tool like Chaos Mesh in our K8s cluster to start with pod failures, then network latency injection."`,
+    watch:`Honesty about not having done this formally is fine at Lead level — but you <b>must</b> show clear thinking on how you'd approach it. Don't fake experience here.`
+  },
+  {
+    id:7, type:'tech', diff:'med',
+    q:"How do you approach capacity planning for a service that's growing unpredictably?",
+    source:"Mastercard processes billions of transactions — expect capacity questions",
+    why:"At payments scale, capacity failure = revenue loss. This tests proactive reliability thinking.",
+    answer:`<b>Your answer:</b> "Unpredictable growth needs a combination of data analysis and architectural headroom.\n\nFirst, I look at traffic patterns historically — day-of-week peaks, seasonal spikes (in payments, Black Friday, end-of-month payroll runs). Build that baseline.\n\nSecond, load test to find the break point. Not just 'can it handle 2x traffic' but 'what degrades first at 3x, 5x, 10x?'. In Kubernetes, I set HPA policies tuned from these results — not the default 80% CPU, which often triggers too late.\n\nThird, design for graceful degradation: circuit breakers, request shedding, queue-based buffering — so traffic spikes degrade quality gracefully rather than causing hard failures.\n\nAt Informatica I managed AWS-based services where we instrumented autoscaling based on application-level metrics (queue depth, request latency) rather than just CPU — much more responsive."`,
+    watch:`Payments context matters here — mention that payment traffic is often bursty and bi-modal. Shows domain awareness.`
+  },
+  {
+    id:8, type:'tech', diff:'hard',
+    q:"How do you handle a situation where improving reliability conflicts with shipping velocity? How do you negotiate this trade-off?",
+    source:"Lead-level question — tests maturity and stakeholder management",
+    why:"The JD says 'partner across teams to drive shared ownership.' This probes exactly that.",
+    answer:`<b>Your answer:</b> "Error budget is the negotiation tool — it takes the argument out of the room and lets data decide.\n\nWhen the error budget is healthy, teams have runway to move fast and accept more deployment risk. When it's burning, we formally slow down feature work until reliability recovers. This isn't me saying 'slow down' — it's the SLO framework saying it.\n\nBeyond that, I try to make reliability improvements fast to ship: better observability reduces investigation time (so reliability incidents cost less), automated canary deployments reduce rollback risk (so teams can ship more confidently), and runbooks reduce on-call burden (so engineers aren't scared of being on-call).\n\nThe frame I use: 'I'm not slowing you down, I'm making it safe to go fast.' I've used this with product teams at Informatica when pushing back on skipping staging validation."`,
+    watch:`Don't position yourself as the reliability police. The best answer shows you're a <b>partner</b>, not a gatekeeper.`
+  },
+  {
+    id:9, type:'beh', diff:'med',
+    q:"Tell me about a time you led a major incident response. How did you run it?",
+    source:"Near-universal at SRE interviews — always asked",
+    why:"The JD emphasises cross-domain incident leadership. This is the primary evidence check.",
+    answer:`<b>Use your Log4j story:</b>\n\n<b>Situation:</b> "The Log4j CVE was disclosed on a Friday afternoon. We had hundreds of services, many using Java — any of which could be exploited."\n\n<b>Task:</b> "I led the rapid assessment and remediation across multiple product lines without disrupting active release cycles."\n\n<b>Action:</b> "First 2 hours: inventoried all Java dependencies using Black Duck Code Center to identify exposed services. Triaged by external exposure and data sensitivity. Stood up a war room channel, assigned owners per service. Prioritised patches by risk tier rather than treating all services equally."\n\n<b>Result:</b> "Zero customer-facing exploitation. All critical surfaces patched within 72 hours. We then built automated vulnerability scanning into the CI pipeline so future zero-days would be detected at commit time, not post-disclosure. Earned the Think Customer First Award for this response."`,
+    watch:`End with what <b>permanently changed</b> — that's the SRE hallmark answer. Not just 'we fixed it' but 'we made it impossible for this class of issue to go undetected again.'`
+  },
+  {
+    id:10, type:'beh', diff:'med',
+    q:"Describe a time you drove a reliability improvement that required buy-in from teams you didn't manage.",
+    source:"Glassdoor — Mastercard, Google, Stripe lead SRE rounds",
+    why:"Lead SRE = influence without authority. This is a core competency test.",
+    answer:`<b>Your answer:</b> "At Informatica, I wanted to introduce standardised Docker base images with security hardening built in — this would affect every product team's build process, and I had no authority over them.\n\nI built a proof of concept for one team's service first, showing measurably faster build times and a clear compliance benefit (fewer CVEs at scan time). Then I presented at an engineering all-hands with that team's endorsement.\n\nThe key was making adoption easy — I wrote the migration guide, offered to pair with each team during their first migration, and held open office hours. Within a quarter, 80% of services had moved. The remaining 20% moved the following quarter after seeing the results.\n\nLesson: show don't tell, reduce friction, give early adopters credit publicly."`,
+    watch:`The interviewer wants to see that you understand <b>how to create pull vs. push</b>. Don't describe mandating things — describe making the right thing the easy thing.`
+  },
+  {
+    id:11, type:'beh', diff:'med',
+    q:"Tell me about a time you had to push back on a decision that you believed would compromise reliability.",
+    source:"Commonly asked at senior/lead SRE level",
+    why:"Tests whether you can hold a reliability position under pressure — critical at a company like Mastercard.",
+    answer:`<b>Your answer:</b> "At Informatica, a product team wanted to skip staging validation for a hotfix because of customer pressure. My view was that the change touched payment-adjacent code and needed at least a smoke test in staging.\n\nI raised it in the release meeting with specific data: two of our last three incidents had come from hotfixes that skipped staging. That made it a data conversation rather than an opinion conversation.\n\nWe compromised: ran a 15-minute automated smoke suite in staging — the team had it ready in an hour. The fix shipped 90 minutes later than originally planned but with confidence. In hindsight, we found a non-critical edge case in staging that we would have caught in production.\n\nThe lesson for me: always have the data ready. Opinions lose; patterns win."`,
+    watch:`Show you can <b>hold your position with data</b> while still being a collaborative partner. Don't frame yourself as always winning — a thoughtful compromise shows maturity.`
+  },
+  {
+    id:12, type:'beh', diff:'med',
+    q:"How do you run a blameless post-mortem? What makes one effective vs. a box-ticking exercise?",
+    source:"Glassdoor SRE interviews — fintech companies",
+    why:"Post-mortem culture is a leading indicator of engineering maturity — the SRE manager will care deeply.",
+    answer:`<b>Your answer:</b> "A box-ticking post-mortem ends with a timeline and 'action items assigned.' An effective one ends with your system being structurally more resilient.\n\nKey elements I follow: write the timeline collaboratively with everyone involved — different people saw different things. Focus on 'why did the system allow this?' not 'who made the mistake?' The answer to a blameless post-mortem is always a system or process gap, never a person.\n\nAction items must be specific, ownable, and have success criteria. Not 'improve monitoring' but 'add latency p99 alert for the payments service by [date], owned by [name], tested with a synthetic load test.'\n\nFinally: share the post-mortem widely. At Informatica, I pushed for our post-mortems to be shared across teams — they became a learning library. Teams started referencing previous ones in design reviews. That's when you know it's working."`,
+    watch:`Mention <b>systemic improvements</b>, not individual actions. The SRE manager knows the difference between a post-mortem that produces insights vs. one that produces a to-do list.`
+  },
+  {
+    id:13, type:'beh', diff:'easy',
+    q:"Why do you want to move from a DevOps/Architecture role into a formally titled SRE role?",
+    source:"Very likely — your CV title is Principal DevOps Engineer, not SRE",
+    why:"The interviewer wants to check this is a deliberate move, not just a job hop.",
+    answer:`<b>Your answer:</b> "Honestly, I've been doing SRE work for years under a DevOps title. At Zurich, I'm designing observability architecture, defining how we detect and respond to reliability signals, eliminating toil through automation — that's SRE work.\n\nWhat draws me to this role specifically is the formalisation and scale. Mastercard's reliability requirements — processing billions of transactions where downtime has direct financial consequence — is the kind of environment where these practices really matter at their fullest expression.\n\nI also want to be part of a team where reliability engineering is the primary mission, not something we fit around feature delivery. This role gives me that clarity of purpose."`,
+    watch:`This is a narrative question — be <b>genuine</b> and specific about Mastercard. Generic answers about "wanting to grow" will fall flat with an SRE manager.`
+  },
+  {
+    id:14, type:'beh', diff:'med',
+    q:"Tell me about a time you mentored or upskilled engineers in reliability practices.",
+    source:"Lead SRE roles always probe this — you'll be expected to grow the team",
+    why:"The JD mentions mentorship explicitly. This checks your multiplier effect.",
+    answer:`<b>Your answer:</b> "At Informatica I received the 'Act As One Team' award specifically for mentoring around cloud and on-premises release practices.\n\nConcretely: I ran internal workshops on our Jenkins/Harness pipeline design, so teams could build their own pipelines rather than depending on me. I created runbook templates that engineers could follow during incidents without needing to escalate. And I paired with junior engineers during on-call rotations so they built confidence and pattern recognition.\n\nThe measure of good mentorship for me is when people don't need you for routine things anymore — they've internalised the thinking. Within 6 months of those workshops, the number of escalations to me for pipeline issues dropped significantly."`,
+    watch:`Quantify the impact if possible. 'Escalations dropped' is stronger than 'they learned a lot.'`
+  },
+  {
+    id:15, type:'beh', diff:'hard',
+    q:"Describe a time your reliability work failed — something didn't work out as planned. What did you learn?",
+    source:"Psychological safety check — asked at mature engineering organisations",
+    why:"SRE managers look for self-awareness and honest retrospection, not perfection.",
+    answer:`<b>Your answer structure:</b> "Choose a real example where an automation or monitoring approach didn't deliver what you expected. The key is: describe what you learned, what you changed, and that you'd do it again with that knowledge.\n\nExample frame: an early monitoring setup where you realised alert thresholds were arbitrary rather than SLO-derived, causing missed incidents or false alarms. What changed: you shifted to SLI-based alerting, tied to user impact rather than resource metrics.\n\nAvoid: choosing something trivial (shows low self-awareness) or something catastrophic without clear learning (shows poor judgment). Pick something genuinely instructive."`,
+    watch:`This is a <b>character question</b> disguised as a technical one. The interviewer wants to see intellectual honesty, not a success story reframed as a failure.`
+  },
+  {
+    id:16, type:'scen', diff:'hard',
+    q:"A payment processing service is showing elevated latency — p99 is 3x normal. Walk me through your investigation from alert to resolution.",
+    source:"Top-reported scenario question for fintech SRE roles",
+    why:"Tests your systematic debugging process under pressure — the most important SRE skill.",
+    answer:`<b>Step-by-step answer:</b>\n\n<b>1. Characterise:</b> Is it all requests or a subset? Which endpoints? Which regions? Is error rate also elevated or just latency? Check if a deploy happened in the last 30 minutes.\n\n<b>2. Trace:</b> Pull distributed traces from Honeycomb for slow requests. Where in the request chain is the latency — is it our service or a downstream dependency?\n\n<b>3. Correlate:</b> Check infrastructure metrics — is a specific K8s node saturated? Database connection pool exhausted? External API degraded?\n\n<b>4. Hypothesise and test:</b> If it's a downstream dependency, can we fail fast (circuit breaker) to protect upstream? If it's resource contention, can we scale horizontally immediately?\n\n<b>5. Communicate:</b> Update incident channel every 10 minutes even if there's nothing new. Silence is more stressful than uncertainty.\n\n<b>6. Resolve and document:</b> Whatever the fix, add a trace or metric that would have caught this 10 minutes earlier.`,
+    watch:`The interviewer wants to see <b>structured thinking, not panic</b>. Walk through your mental model calmly and show you're checking both symptoms and root causes simultaneously.`
+  },
+  {
+    id:17, type:'scen', diff:'hard',
+    q:"You've just joined Mastercard as Lead SRE. In your first 90 days, what are you prioritising and why?",
+    source:"Frequently asked at Lead/Principal SRE rounds — Glassdoor confirmed",
+    why:"Tests strategic thinking and how you balance learning vs. acting.",
+    answer:`<b>Your answer:</b>\n\n<b>Days 1–30 — Listen and map:</b> "I won't change anything. I'll read every post-mortem from the last 12 months, sit in on on-call rotations, and interview engineers about their biggest reliability pain points. Map the current SLO/SLI coverage — what's measured, what's not."\n\n<b>Days 31–60 — Quick wins:</b> "Identify 2–3 high-toil areas where automation would immediately help. A quick win builds credibility. Also start filling observability gaps — if a critical service has no traces, instrument it."\n\n<b>Days 61–90 — Strategic plan:</b> "Propose a reliability roadmap: SLO definitions for the top 5 services, an error budget policy, a post-mortem template, and a toil reduction backlog. Present to the team for input, not as a mandate."`,
+    watch:`Don't say you'd "implement best practices" immediately. Listening first is the senior-level answer. The manager wants to see you understand that context before action.`
+  },
+  {
+    id:18, type:'scen', diff:'med',
+    q:"A new microservice is being proposed by the product team. How do you ensure reliability is built in from the start?",
+    source:"JD specifically mentions 'early in the development lifecycle' — this question is very likely",
+    why:"Tests your shift-left reliability thinking — the JD's 'anticipation over reaction' principle.",
+    answer:`<b>Your answer:</b> "I'd join the design review before any code is written. My reliability checklist for a new service:\n\n<b>SLO first:</b> What's the acceptable failure rate and latency from the user's perspective? Define this before choosing any architecture.\n\n<b>Failure mode analysis:</b> What happens when each downstream dependency is unavailable? Design the circuit breakers, retries with backoff, and fallbacks before they're needed.\n\n<b>Observability contract:</b> What traces, metrics, and logs will this service emit? Defined up front, not bolted on later.\n\n<b>Runbook draft:</b> Write the initial runbook at launch — what does the on-call engineer do if this service is paging at 3am?\n\n<b>Load test before go-live:</b> Especially for a payments service — no launch without knowing the failure point.\n\nThis shifts 80% of reliability work left into design, where it's 10x cheaper than fixing in production."`,
+    watch:`Show you're a <b>partner in design</b>, not a gatekeeper at deployment. The goal is enabling fast, confident launches — not adding friction.`
+  },
+  {
+    id:19, type:'scen', diff:'hard',
+    q:"How would you define SLOs for Mastercard's core payment authorisation service? Walk me through your thinking.",
+    source:"Company-specific scenario — reported in fintech SRE interviews",
+    why:"Payments has unique reliability characteristics. Tests domain awareness.",
+    answer:`<b>Your answer:</b>\n\n<b>Start with user impact:</b> "For a payment authorisation, the user's experience has two dimensions: did it succeed? And how fast? I'd define SLIs around both."\n\n<b>SLI 1 — Availability:</b> "% of authorisation requests that return a non-error response within 5 seconds. Not just 'is the service up' but 'did it successfully process the transaction?'"\n\n<b>SLI 2 — Latency:</b> "p99 response time for authorisation requests — because a slow authorisation is a failed checkout experience even if technically successful."\n\n<b>SLO targets:</b> "For a payment-critical service at Mastercard's scale, I'd start conservatively — 99.95% availability, p99 latency under 800ms — and adjust based on historical data. The SLO needs to be achievable before it can be aspirational."\n\n<b>Error budget:</b> "99.95% availability over 30 days = ~22 minutes of error budget. Given the financial impact of payment failures, I'd set burn rate alerts at very conservative thresholds."`,
+    watch:`Financial-grade SLOs are more stringent than typical SaaS. Showing awareness of 99.95% vs 99.9% and the difference that makes operationally demonstrates domain maturity.`
+  },
+  {
+    id:20, type:'scen', diff:'med',
+    q:"Your team's error budget has been consumed in the first week of the month. What do you do?",
+    source:"Classic SRE scenario — tests whether you understand error budget as a management tool",
+    why:"Separates people who understand SRE theory from those who've practised it.",
+    answer:`<b>Your answer:</b> "First, understand why — is this one large incident or sustained degradation? Acute vs chronic require different responses.\n\nIf it's consumed, the SLO framework gives us a clear answer: feature work pauses, reliability work takes priority. This isn't a negotiation — it's the policy we agreed to upfront.\n\nIn practice: I call a reliability sprint. The team focuses on: root cause of what burned the budget, any systemic issues that made the incident worse (poor runbooks, slow detection), and hardening to prevent recurrence.\n\nI'd also have a stakeholder conversation — not to apologise, but to explain what we're prioritising and when we expect to resume normal velocity. Transparency here prevents the alternative: product teams feeling blindsided by a reliability slowdown.\n\nFinally, if the budget burned from a single incident, I'd push for a post-mortem within 48 hours and a concrete set of structural changes before we re-open the feature roadmap."`,
+    watch:`Don't say 'we'd evaluate the situation.' The answer should show you have a <b>policy</b> — the power of error budgets is that they remove subjectivity from the decision.`
+  },
+  {
+    id:21, type:'sys', diff:'hard',
+    q:"Design a reliability monitoring system for a global payment processing platform handling 10,000 transactions per second.",
+    source:"System design question — reported at Stripe, Mastercard, PayPal SRE rounds",
+    why:"Tests whether you can design at scale — Mastercard processes at this order of magnitude.",
+    answer:`<b>Key components to cover:</b>\n\n<b>Instrumentation:</b> "All services emit traces (OTLP), metrics (Prometheus exposition format), and structured logs (JSON). OTel collectors at the edge, aggregating before sending to backends — reduces network overhead at 10k TPS."\n\n<b>Metrics pipeline:</b> "Prometheus for short-term storage and alerting. Thanos or Cortex for long-term storage and global aggregation across regions. Grafana for dashboards."\n\n<b>Trace analysis:</b> "Honeycomb or Jaeger for high-cardinality trace exploration — especially important for debugging payment failures where you need to query by card type, merchant, region simultaneously."\n\n<b>Alerting:</b> "Alertmanager with routing to PagerDuty. Two-tier: SLO burn rate alerts page immediately. Infrastructure anomalies go to a team channel for async review."\n\n<b>Synthetic monitoring:</b> "Synthetic transaction probes every 60 seconds from each region — end-to-end test that simulates a real authorisation without hitting production rails."\n\n<b>Your differentiator:</b> Mention your OTel experience — this design is what you're building at Zurich.`,
+    watch:`At 10k TPS, cardinality and sampling strategy matter enormously — mention head-based sampling for normal traffic, tail-based sampling to capture all error traces.`
+  },
+  {
+    id:22, type:'sys', diff:'hard',
+    q:"How would you design a deployment pipeline that minimises production risk for a payment-critical service?",
+    source:"Directly maps to your Informatica experience — will definitely come up",
+    why:"Your 50% MTTR reduction via pipelines is a core differentiator — they'll probe the details.",
+    answer:`<b>Your answer:</b>\n\n<b>Progressive delivery:</b> "No big-bang deploys. Canary releases: 1% → 5% → 25% → 100% of traffic, with automated SLO checks at each stage gating promotion. A deploy that degrades error rate by 0.1% fails the canary and rolls back automatically."\n\n<b>Feature flags:</b> "Decouple deploy from release. Code can be in production, dark, until business is ready to enable it. This eliminates rollback as an emergency measure — just toggle the flag."\n\n<b>Automated rollback:</b> "If post-deploy error rate or latency crosses a threshold within 10 minutes, the pipeline rolls back automatically. No human required for the most time-sensitive window."\n\n<b>Your evidence:</b> "At Informatica, integrating Harness with Kubernetes reduced deployment time by 50%. The key was automated gate checks at each stage — human approval only for the final production promotion. For a payment service I'd make the automated gates more stringent, with SLO-based thresholds rather than just health checks."`,
+    watch:`For payments, emphasise <b>automated rollback</b> and <b>progressive delivery</b> specifically — manual interventions at 3am are too risky at this scale.`
+  },
+  {
+    id:23, type:'sys', diff:'med',
+    q:"How would you approach reducing operational toil across an SRE team that's spending 60% of time on manual tasks?",
+    source:"Toil elimination is a JD requirement — expect a design question around it",
+    why:"Tests strategic toil reduction thinking, not just tactical automation.",
+    answer:`<b>Your answer:</b>\n\n<b>Measure first:</b> "I'd spend 2 weeks having the team categorise every task: is it toil (manual, repetitive, automatable) or engineering work? Most teams underestimate how much is toil until they track it."\n\n<b>Prioritise by frequency × time:</b> "The highest ROI automation targets are things done daily or weekly that take 30+ minutes. Create a matrix: frequency on one axis, time cost on the other. Top-right quadrant = automate first."\n\n<b>Common wins:</b> "Runbook automation — convert manual runbook steps into scripts. Alert deduplication — reduce pages by 30% with better alert routing. Self-service tooling — let dev teams handle routine tasks (log queries, deployment rollbacks) without SRE involvement."\n\n<b>Your evidence:</b> "At AVR Edge I reduced manual intervention by 75% through Python automation. At Informatica I built reusable pipeline templates so teams didn't need SRE for every pipeline change. The Aspire For Future award came from an automation framework that caught bugs during development, reducing production toil downstream."`,
+    watch:`Connect to your actual awards — the Aspire award is a perfect concrete example. Don't just speak theoretically.`
+  },
+  {
+    id:24, type:'sys', diff:'med',
+    q:"A team wants to migrate a monolith to microservices. What reliability risks do you raise and how do you mitigate them?",
+    source:"Architecture + reliability combined — common at senior/lead SRE level",
+    why:"Tests cross-stack reliability thinking — 'cross stack reliability expert' is literally in the JD.",
+    answer:`<b>Reliability risks to raise:\n\n<b>1. Distributed systems failure modes:</b> "Network partitions, partial failures, increased latency. A monolith fails cleanly — a microservices architecture fails in complex, partial ways. You need circuit breakers, retries with backoff, and timeout budgets on every service boundary."\n\n<b>2. Observability complexity:</b> "A single request now spans 5 services. Without distributed tracing from day one, debugging production issues becomes exponentially harder. Non-negotiable: instrument before you migrate."\n\n<b>3. Data consistency:</b> "Distributed transactions are hard. If the monolith had database transactions, how do you handle partial failures in microservices? Saga pattern? Eventual consistency? This needs a decision before migration."\n\n<b>4. SLO definition:</b> "Each new service needs its own SLO. The aggregate SLO of the system is approximately the product of individual SLOs — if each of 10 services is 99.9%, the end-to-end is ~99%."\n\n<b>Mitigation:</b> "Strangler fig pattern — migrate one capability at a time, with a proxy in front. Run in parallel before cutting over. Define SLOs for each extracted service before it goes live."`,
+    watch:`This tests <b>breadth</b> — don't just cover one risk. Show you're thinking about observability, data, reliability engineering, and architecture simultaneously.`
+  },
+  {
+    id:25, type:'sys', diff:'hard',
+    q:"What questions do you have for me?",
+    source:"Always the last question — many candidates underprepare this",
+    why:"Your questions signal how you think about the role. Weak questions = weak impression at the finish line.",
+    answer:`<b>Use 3–4 of these (tailored to conversation):</b>\n\n"What does a major incident look like at Mastercard, and how does your team's role differ from the application teams during one?"\n\n"How do you measure the success of your SRE team? Is it SLO compliance, toil percentage, something else?"\n\n"Where is your current biggest reliability gap — what keeps you up at night from a system reliability perspective?"\n\n"How do you balance reliability investment with the pace of product delivery? What does that conversation look like with engineering leadership?"\n\n"What does the on-call experience look like — frequency, escalation paths, and how you've worked to reduce incident volume over time?"\n\n"What would make someone exceptional in this role in the first 6 months — what does success look like to you?"`,
+    watch:`Avoid: "What's the salary progression?" or "How many days WFH?" — save those for HR. The SRE manager round is for engineering depth. Your questions should demonstrate you've thought about <b>their</b> reliability challenges, not just your own.`
+  }
+];
+
+let activeFilter = 'all';
+
+function filter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  render();
+}
+
+function toggleQ(id) {
+  const item = document.getElementById('q-'+id);
+  const body = document.getElementById('qb-'+id);
+  body.classList.toggle('open');
+  item.classList.toggle('open');
+}
+
+function render() {
+  const filtered = Qs.filter(q => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'tech') return q.type === 'tech';
+    if (activeFilter === 'beh') return q.type === 'beh';
+    if (activeFilter === 'scen') return q.type === 'scen';
+    if (activeFilter === 'sys') return q.type === 'sys';
+    if (activeFilter === 'hard') return q.diff === 'hard';
+    if (activeFilter === 'med') return q.diff === 'med';
+    return true;
+  });
+
+  document.getElementById('s-total').textContent = filtered.length;
+
+  const typeMap = {tech:'Technical',beh:'Behavioural',scen:'Scenario',sys:'System design'};
+  const typeClass = {tech:'tag-tech',beh:'tag-beh',scen:'tag-scen',sys:'tag-sys'};
+  const diffClass = {hard:'tag-hard',med:'tag-med',easy:'tag-easy'};
+  const diffLabel = {hard:'Hard',med:'Medium',easy:'Easy'};
+
+  const list = document.getElementById('qlist');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="no-results">No questions match this filter.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((q,i) => `
+    <div class="q-item" id="q-${q.id}">
+      <div class="q-head" onclick="toggleQ(${q.id})">
+        <div class="q-meta">
+          <div class="q-tags">
+            <span class="tag ${typeClass[q.type]}">${typeMap[q.type]}</span>
+            <span class="tag ${diffClass[q.diff]}">${diffLabel[q.diff]}</span>
+          </div>
+          <div class="q-text">Q${i+1}. ${q.q}</div>
+          <div class="q-source"><i class="ti ti-info-circle" style="font-size:12px;vertical-align:-1px" aria-hidden="true"></i> ${q.source}</div>
+        </div>
+        <i class="ti ti-chevron-down chev" aria-hidden="true"></i>
+      </div>
+      <div class="q-body" id="qb-${q.id}">
+        <div class="section">
+          <div class="section-label">Why they ask this</div>
+          <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.6">${q.why}</div>
+        </div>
+        <div class="section">
+          <div class="section-label">Model answer — tailored to your background</div>
+          <div class="answer-box">${q.answer.replace(/\n/g,'<br>')}</div>
+        </div>
+        <div class="watch"><b>Watch out:</b> ${q.watch}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+render();
+</script>
